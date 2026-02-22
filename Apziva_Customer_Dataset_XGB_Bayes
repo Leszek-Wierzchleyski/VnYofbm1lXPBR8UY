@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from skopt import BayesSearchCV
+import pandas as pd
+import xgboost as xgb
+from skopt.space import Real, Integer
+
+"""Convert file to Pandas Dataframe. Prepare target labels and remove them from
+ dataset. Split data into training and testing dataset."""
+
+
+filepath = 'ACME-HappinessSurvey2020.csv'
+
+df = pd.read_csv(filepath)
+
+
+y = df['Y']
+
+
+
+x = df.drop(columns=['Y'])
+
+
+"""Hyperparameter search space for Bayesian Optimisation"""
+
+search_space = {
+    'max_depth': Integer(3,6),
+    'eta': Real(0.01, 0.1),
+    'base_score': Real(0.1, 0.9),
+    'n_estimators': Integer(15, 50),
+    'reg_lambda': Real(0, 5),
+    'alpha': Real(0, 5)
+    
+}
+
+"""Build and train Extreme Gradient Boosted Tree Model. Run Bayesian 
+Optimisation and obtain optimised hyperparameters."""
+
+model = xgb.XGBClassifier(objective='binary:logistic', max_depth=4, 
+                          verbosity=2
+                          )
+
+
+bayes_search = BayesSearchCV(estimator=model, search_spaces=search_space, 
+                             n_iter=200, cv=5, n_jobs=-1, verbose=2)
+bayes_search.fit(x, y)
+
+
+
+ 
+print(f"Best parameters: {bayes_search.best_params_}")
+print(f"Best score: {bayes_search.best_score_}")
