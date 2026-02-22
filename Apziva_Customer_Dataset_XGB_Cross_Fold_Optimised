@@ -5,6 +5,10 @@ import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import cross_val_score
 
+"""Convert file to Pandas Dataframe. Prepare target labels and remove them from
+ dataset. Split data into training and testing dataset."""
+
+
 filepath = 'ACME-HappinessSurvey2020.csv'
 
 df = pd.read_csv(filepath)
