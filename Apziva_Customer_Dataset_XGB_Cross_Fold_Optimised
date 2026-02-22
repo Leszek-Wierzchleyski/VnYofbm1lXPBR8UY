@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import pandas as pd
+import xgboost as xgb
+from sklearn.model_selection import cross_val_score
+
+filepath = 'ACME-HappinessSurvey2020.csv'
+
+df = pd.read_csv(filepath)
+
+
+y = df['Y']
+
+
+
+x = df.drop(columns=['Y'])
+
+"""Build and train Extreme Gradient Boosted Tree Model. Run K-Fold Cross 
+validation. Obtain test accuracy scores for each run and average test accuracy 
+score."""
+
+model  = xgb.XGBClassifier(objective='binary:logistic',eta=0.06077903050555141, max_depth=4, 
+                          n_estimators=23, reg_lambda=4.626136561621074, 
+                          alpha=3.0631396721413133, 
+                          booster='gbtree',
+                          base_score = 0.47893196726363785,
+                          min_child_weight=1,
+                          
+                          )
+
+model.fit(x, y)
+
+model.fit(x, y)
+cv_scores = cross_val_score(model, x, y, scoring='accuracy', cv=5)
+print(cv_scores)
+
+mae_cv = cv_scores.mean()
+print(mae_cv)
+
+
+
